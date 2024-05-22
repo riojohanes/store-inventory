@@ -1,22 +1,29 @@
 package main
 
-// import (
-// 	"github.com/gin-gonic/gin"
-// 	"gorm.io/driver/postgres"
-// 	"gorm.io/gorm"
-// 	// "inventory-app/controllers"
-// 	// "inventory-app/models"
-// )
+import (
+	"store-inventory-app/controllers"
+	"store-inventory-app/models"
 
-// // func main() {
-// // 	db, err := gorm.Open(postgres.Open("inventory.db"), &gorm.Config{})
-// // 	if err != nil {
-// // 		panic("failed to connect database")
-// // 	}
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
 
-// // 	// db.AutoMigrate(&models.Item{})
+func main() {
+	db, err := gorm.Open(postgres.Open("inventory.db"), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
 
-// // 	r := gin.Default()
-// // 	// controllers.RegisterRoutes(r, db)
-// // 	r.Run()
-// // }
+	db.AutoMigrate(&models.Item{})
+
+	// router gin
+	r := gin.Default()
+
+	r.Use(cors.Default())
+
+	controllers.RegisterRoutes(r, db)
+
+	r.Run(":8080")
+}
