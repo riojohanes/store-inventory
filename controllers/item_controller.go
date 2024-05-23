@@ -8,62 +8,65 @@ import (
 	"gorm.io/gorm"
 )
 
-func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
+func GetItems(c *gin.Context) {
 	//get all items
-	r.GET("/items", func(c *gin.Context) {
-		var items []models.Item
-		db.Find(&items)
-		c.JSON(http.StatusOK, items)
-	})
+	db := c.MustGet("db").(*gorm.DB)
+	var items []models.Item
+	db.Preload("Items").Find(&items)
+	c.JSON(http.StatusOK, items)
+}
 
+func GetItem(c *gin.Context) {
 	//get item
-	r.GET("/item/:id", func(c *gin.Context) {
-		var item models.Item
-		id := c.Param("id")
-		if err := db.First(&item, id).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
-			return
-		}
-		c.JSON(http.StatusOK, item)
-	})
+	db := c.MustGet("db").(*gorm.DB)
+	var item models.Item
+	id := c.Param("id")
+	if err := db.Preload("Items").First(&item, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
+		return
+	}
+	c.JSON(http.StatusOK, item)
+}
 
+func AddItem(c *gin.Context) {
 	//add item
-	r.POST("/items", func(c *gin.Context) {
-		var item models.Item
-		if err := c.ShouldBindJSON(&item); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		db.Create(&item)
-		c.JSON(http.StatusOK, item)
-	})
+	db := c.MustGet("db").(*gorm.DB)
+	var item models.Item
+	if err := c.ShouldBindJSON(&item); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	db.Create(&item)
+	c.JSON(http.StatusOK, item)
+}
 
+func UpdateItem(c *gin.Context) {
 	//update item
-	r.PUT("/item/:id", func(c *gin.Context) {
-		var item models.Item
-		id := c.Param("id")
-		if err := db.First(&item, id).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "item not found"})
-			return
-		}
+	db := c.MustGet("db").(*gorm.DB)
+	var item models.Item
+	id := c.Param("id")
+	if err := db.First(&item, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "item not found"})
+		return
+	}
 
-		if err := c.ShouldBindBodyWithJSON(&item); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		db.Save(&item)
-		c.JSON(http.StatusOK, item)
-	})
+	if err := c.ShouldBindJSON(&item); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	db.Save(&item)
+	c.JSON(http.StatusOK, item)
+}
 
-	//delete item
-	r.DELETE("/item/:id", func(c *gin.Context) {
-		var item models.Item
-		id := c.Param("id")
-		if err := db.First(&item, id).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Delete failed"})
-			return
-		}
-		db.Delete(&item)
-		c.JSON(http.StatusOK, gin.H{"message": "Item deleted"})
-	})
+func DeleteItem(c *gin.Context) {
+	// delete item
+	db := c.MustGet("db").(*gorm.DB)
+	var item models.Item
+	id := c.Param("id")
+	if err := db.First(&item, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Delete failed"})
+		return
+	}
+	db.Delete(&item)
+	c.JSON(http.StatusOK, gin.H{"message": "Item deleted"})
 }

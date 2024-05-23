@@ -11,9 +11,3 @@ type Item struct {
 	SupplierID  uint     `json:"supplier_id"`
 	Supplier    string   `json:"supplier"`
 }
-
-type Category struct {
-	ID    uint   `gorm:"PrimaryKey"`
-	Name  string `json:"name"`
-	Items []Item `json:"items"`
-}
