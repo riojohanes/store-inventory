@@ -38,6 +38,23 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 		c.JSON(http.StatusOK, item)
 	})
 
+	//update item
+	r.PUT("/item/:id", func(c *gin.Context) {
+		var item models.Item
+		id := c.Param("id")
+		if err := db.First(&item, id).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "item not found"})
+			return
+		}
+
+		if err := c.ShouldBindBodyWithJSON(&item); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		db.Save(&item)
+		c.JSON(http.StatusOK, item)
+	})
+
 	//delete item
 	r.DELETE("/item/:id", func(c *gin.Context) {
 		var item models.Item
