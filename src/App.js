@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { CssBaseline, AppBar, Toolbar, Typography, Container } from '@mui/material';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { CssBaseline, AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
 import DashboardPage from './pages/DashboardPage';
 import OrderPage from './pages/OrderPage';
 import SupplierPage from './pages/SupplierPage';
@@ -14,7 +14,15 @@ const App = () => {
             <CssBaseline />
             <AppBar position="static">
                 <Toolbar>
-                    <Typography variant="h6">Stock Management</Typography>
+                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                        Stock Management
+                    </Typography>
+                    <Button color="inherit" component={Link} to="/">Dashboard</Button>
+                    <Button color="inherit" component={Link} to="/orders">Orders</Button>
+                    <Button color="inherit" component={Link} to="/suppliers">Suppliers</Button>
+                    <Button color="inherit" component={Link} to="/items">Items</Button>
+                    <Button color="inherit" component={Link} to="/categories">Categories</Button>
+                    <Button color="inherit" component={Link} to="/sales">Sales</Button>
                 </Toolbar>
             </AppBar>
             <Container>
