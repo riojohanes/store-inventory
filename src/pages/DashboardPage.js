@@ -1,34 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import StockForm from '../components/StockForm';
-import StockList from '../components/StockList';
-import axios from 'axios';
+import React from 'react';
+import { Container, Typography } from '@mui/material';
 
 const DashboardPage = () => {
-    const [stocks, setStocks] = useState([]);
-
-    const handleAddStock = (newStock) => {
-        setStocks([...stocks, newStock]);
-    };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/stocks');
-                setStocks(response.data);
-            } catch (error) {
-                console.error('There was an error fetching the stocks!', error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
     return (
-        <div>
-            <h1>Dashboard</h1>
-            <StockForm onAdd={handleAddStock} />
-            <StockList stocks={stocks} />
-        </div>
+        <Container>
+            <Typography variant="h4" gutterBottom>
+                Dashboard
+            </Typography>
+            <Typography variant="body1">
+                Welcome to the Stock Management Dashboard. Use the navigation above to manage orders, suppliers, items, categories, and sales.
+            </Typography>
+        </Container>
     );
 };
 
