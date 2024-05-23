@@ -1,0 +1,6 @@
+package models
+
+type Supplier struct {
+	ID   uint   `gorm:"PrimaryKey"`
+	Name string `json:"name"`
+}
