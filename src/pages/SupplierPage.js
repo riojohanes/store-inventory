@@ -9,15 +9,24 @@ const SupplierPage = () => {
 
     useEffect(() => {
         const fetchSuppliers = async () => {
-            const response = await axios.get('/api/suppliers');
-            setSuppliers(response.data);
+            try {
+                const response = await axios.get('http://localhost:5432/suppliers'); // Pastikan URL ini sesuai dengan endpoint backend
+                setSuppliers(response.data);
+            } catch (error) {
+                console.error('There was an error fetching the suppliers!', error);
+            }
         };
 
         fetchSuppliers();
     }, []);
 
-    const handleAddSupplier = (newSupplier) => {
-        setSuppliers([...suppliers, newSupplier]);
+    const handleAddSupplier = async (newSupplier) => {
+        try {
+            const response = await axios.post('http://localhost:5432/suppliers', newSupplier);
+            setSuppliers([...suppliers, response.data]);
+        } catch (error) {
+            console.error('There was an error adding the supplier!', error);
+        }
     };
 
     return (

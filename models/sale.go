@@ -1,17 +1,21 @@
 package models
 
+import (
+	"gorm.io/gorm"
+)
+
 type Sale struct {
-	ID          uint       `gorm:"primaryKey"`
-	SaleDate    string     `json:"sale_date"`
-	TotalAmount int        `json:"total_amount"`
-	Status      string     `json:"status"`
-	Items       []SaleItem `json:"items" gorm:"foreignKey:SaleID"`
+    gorm.Model
+    TotalAmount int64      `json:"total_amount"`
+    SaleDate    string     `json:"sale_date"`
+    Status      string     `json:"status"`
+    SaleItems   []SaleItem `json:"sale_items" gorm:"foreignKey:SaleID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type SaleItem struct {
-	SaleID   uint `json:"sale_id" gorm:"primaryKey"`
-	ItemID   uint `json:"item_id" gorm:"primaryKey"`
-	Item     Item `json:"item" gorm:"foreignKey:ItemID"`
-	Quantity int  `json:"quantity"`
-	Price    int  `json:"price"`
+    gorm.Model
+    SaleID   uint `json:"sale_id"`
+    ItemID   uint `json:"item_id"`
+    Item     Item `json:"item" gorm:"foreignKey:ItemID"`
+    Quantity int  `json:"quantity"`
 }

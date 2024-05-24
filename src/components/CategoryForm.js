@@ -2,41 +2,29 @@ import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import axios from 'axios';
 
-const CategoryForm = ({ onAdd }) => {
-    const [categoryData, setCategoryData] = useState({
-        category_name: ''
-    });
+const CategoryForm = ({ onAddCategory }) => {
+    const [categoryName, setCategoryName] = useState('');
 
-    const handleChange = (e) => {
-        setCategoryData({
-            ...categoryData,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleAddCategory = async () => {
         try {
-            const response = await axios.post('/api/categories', categoryData);
-            onAdd(response.data);
-            setCategoryData({ category_name: '' });
+            const response = await axios.post('http://localhost:8080/categories', { name: categoryName });
+            onAddCategory(response.data);
+            setCategoryName('');
         } catch (error) {
-            console.error('There was an error creating the category!', error);
+            console.error('There was an error adding the category!', error);
         }
     };
 
     return (
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
             <TextField
                 label="Category Name"
-                name="category_name"
-                value={categoryData.category_name}
-                onChange={handleChange}
-                required
-                fullWidth
-                margin="normal"
+                variant="outlined"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                sx={{ mb: 2, width: '300px' }}
             />
-            <Button type="submit" variant="contained" color="primary" fullWidth>
+            <Button variant="contained" color="primary" onClick={handleAddCategory}>
                 Add Category
             </Button>
         </Box>

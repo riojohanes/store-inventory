@@ -9,19 +9,22 @@ import (
 )
 
 func GetItems(c *gin.Context) {
-	//get all items
+	// Get all items
 	db := c.MustGet("db").(*gorm.DB)
 	var items []models.Item
-	db.Preload("Items").Find(&items)
+	if err := db.Find(&items).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, items)
 }
 
 func GetItem(c *gin.Context) {
-	//get item
+	// Get item by ID
 	db := c.MustGet("db").(*gorm.DB)
 	var item models.Item
 	id := c.Param("id")
-	if err := db.Preload("Items").First(&item, id).Error; err != nil {
+	if err := db.First(&item, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
 		return
 	}
@@ -29,37 +32,42 @@ func GetItem(c *gin.Context) {
 }
 
 func AddItem(c *gin.Context) {
-	//add item
+	// Add new item
 	db := c.MustGet("db").(*gorm.DB)
 	var item models.Item
 	if err := c.ShouldBindJSON(&item); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	db.Create(&item)
+	if err := db.Create(&item).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, item)
 }
 
 func UpdateItem(c *gin.Context) {
-	//update item
+	// Update item by ID
 	db := c.MustGet("db").(*gorm.DB)
 	var item models.Item
 	id := c.Param("id")
 	if err := db.First(&item, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "item not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
 		return
 	}
-
 	if err := c.ShouldBindJSON(&item); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	db.Save(&item)
+	if err := db.Save(&item).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, item)
 }
 
 func DeleteItem(c *gin.Context) {
-	// delete item
+	// Delete item by ID
 	db := c.MustGet("db").(*gorm.DB)
 	var item models.Item
 	id := c.Param("id")
@@ -67,6 +75,9 @@ func DeleteItem(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Delete failed"})
 		return
 	}
-	db.Delete(&item)
+	if err := db.Delete(&item).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"message": "Item deleted"})
 }

@@ -6,73 +6,70 @@ import (
 )
 
 func Seed() {
-	// Categories
-	categories := []models.Category{
-		{Name: "Minuman"},
-		{Name: "Makanan"},
-	}
+    // Seed categories
+    categories := []models.Category{
+        {Name: "Electronics"},
+        {Name: "Furniture"},
+        {Name: "Clothing"},
+    }
 
-	for _, category := range categories {
-		if err := DB.Create(&category).Error; err != nil {
-			log.Fatalf("Failed to seed categories: %v", err)
-		}
-	}
+    for _, category := range categories {
+        if err := DB.FirstOrCreate(&category, models.Category{Name: category.Name}).Error; err != nil {
+            log.Fatalf("Failed to seed categories: %v", err)
+        }
+    }
 
-	// Suppliers
-	suppliers := []models.Supplier{
-		{Name: "Supplier A"},
-		{Name: "Supplier B"},
-	}
+    // Seed suppliers
+    suppliers := []models.Supplier{
+        {Name: "Supplier A"},
+        {Name: "Supplier B"},
+        {Name: "Supplier C"},
+    }
 
-	for _, supplier := range suppliers {
-		if err := DB.Create(&supplier).Error; err != nil {
-			log.Fatalf("Failed to seed suppliers: %v", err)
-		}
-	}
+    for _, supplier := range suppliers {
+        if err := DB.FirstOrCreate(&supplier, models.Supplier{Name: supplier.Name}).Error; err != nil {
+            log.Fatalf("Failed to seed suppliers: %v", err)
+        }
+    }
 
-	// Items
-	items := []models.Item{
-		{Name: "Roti", Description: "Roti tawar", Quantity: 10, CategoryID: 2, SupplierID: 1, Price: 5000},
-		{Name: "Teh", Description: "Teh kasih es biar seger", Quantity: 20, CategoryID: 1, SupplierID: 1, Price: 3000},
-		{Name: "Kopi", Description: "Kopi biar ga ngantuk", Quantity: 30, CategoryID: 1, SupplierID: 2, Price: 7000},
-	}
+    // Seed items
+    items := []models.Item{
+        {Name: "Laptop", Description: "A powerful laptop", Quantity: 10, CategoryID: 1, Price: 1500000, SupplierID: 1, Supplier: "Supplier A"},
+        {Name: "Chair", Description: "A comfortable chair", Quantity: 20, CategoryID: 2, Price: 500000, SupplierID: 2, Supplier: "Supplier B"},
+        {Name: "T-Shirt", Description: "A stylish t-shirt", Quantity: 30, CategoryID: 3, Price: 200000, SupplierID: 3, Supplier: "Supplier C"},
+    }
 
-	for _, item := range items {
-		if err := DB.Create(&item).Error; err != nil {
-			log.Fatalf("Failed to seed items: %v", err)
-		}
-	}
+    for _, item := range items {
+        if err := DB.FirstOrCreate(&item, models.Item{Name: item.Name}).Error; err != nil {
+            log.Fatalf("Failed to seed items: %v", err)
+        }
+    }
 
-	// Orders
-	orders := []models.Order{
-		{SupplierID: 1, OrderDate: "2023-05-23", Status: "Pending", Items: []models.OrderItem{
-			{ItemID: 1, Quantity: 10},
-			{ItemID: 2, Quantity: 5},
-		}},
-		{SupplierID: 2, OrderDate: "2023-05-23", Status: "Completed", Items: []models.OrderItem{
-			{ItemID: 3, Quantity: 7},
-		}},
-	}
+    // Seed orders
+    orders := []models.Order{
+        {SupplierID: 1, OrderDate: "2024-01-01", Status: "Pending"},
+        {SupplierID: 2, OrderDate: "2024-01-02", Status: "Completed"},
+        {SupplierID: 3, OrderDate: "2024-01-03", Status: "Cancelled"},
+    }
 
-	for _, order := range orders {
-		if err := DB.Create(&order).Error; err != nil {
-			log.Fatalf("Failed to seed orders: %v", err)
-		}
-	}
+    for _, order := range orders {
+        if err := DB.FirstOrCreate(&order, models.Order{OrderDate: order.OrderDate}).Error; err != nil {
+            log.Fatalf("Failed to seed orders: %v", err)
+        }
+    }
 
-	// Sales
-	sales := []models.Sale{
-		{SaleDate: "2023-05-23", TotalAmount: 35000, Status: "Completed", Items: []models.SaleItem{
-			{ItemID: 1, Quantity: 2, Price: 5000},
-			{ItemID: 3, Quantity: 3, Price: 7000},
-		}},
-	}
+    // Seed sales
+    sales := []models.Sale{
+        {TotalAmount: 1000000, SaleDate: "2024-01-01", Status: "Completed"},
+        {TotalAmount: 500000, SaleDate: "2024-01-02", Status: "Completed"},
+        {TotalAmount: 200000, SaleDate: "2024-01-03", Status: "Pending"},
+    }
 
-	for _, sale := range sales {
-		if err := DB.Create(&sale).Error; err != nil {
-			log.Fatalf("Failed to seed sales: %v", err)
-		}
-	}
+    for _, sale := range sales {
+        if err := DB.FirstOrCreate(&sale, models.Sale{SaleDate: sale.SaleDate}).Error; err != nil {
+            log.Fatalf("Failed to seed sales: %v", err)
+        }
+    }
 
-	log.Println("Seeding completed successfully")
+    log.Println("Database seeding completed successfully")
 }

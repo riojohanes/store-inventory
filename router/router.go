@@ -5,11 +5,21 @@ import (
 	"store-inventory-app/database"
 	"store-inventory-app/middleware"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func Init() *gin.Engine {
 	r := gin.Default()
+
+	// Tambahkan middleware CORS
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"}, // Ganti dengan alamat frontend Anda
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	database.Init()
 	db := database.DB
@@ -50,6 +60,9 @@ func Init() *gin.Engine {
 	r.GET("/sales/:id", controllers.GetSale)
 	r.PUT("/sales/:id", controllers.UpdateSale)
 	r.DELETE("/sales/:id", controllers.DeleteSale)
+
+	// // Check data route
+	// r.GET("/checkdata", controllers.CheckData)
 
 	return r
 }

@@ -9,15 +9,24 @@ const OrderPage = () => {
 
     useEffect(() => {
         const fetchOrders = async () => {
-            const response = await axios.get('/api/orders');
-            setOrders(response.data);
+            try {
+                const response = await axios.get('http://localhost:5432/orders'); // Pastikan URL ini sesuai dengan endpoint backend
+                setOrders(response.data);
+            } catch (error) {
+                console.error('There was an error fetching the orders!', error);
+            }
         };
 
         fetchOrders();
     }, []);
 
-    const handleAddOrder = (newOrder) => {
-        setOrders([...orders, newOrder]);
+    const handleAddOrder = async (newOrder) => {
+        try {
+            const response = await axios.post('http://localhost:5432/orders', newOrder);
+            setOrders([...orders, response.data]);
+        } catch (error) {
+            console.error('There was an error adding the order!', error);
+        }
     };
 
     return (

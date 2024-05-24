@@ -9,15 +9,24 @@ const SalePage = () => {
 
     useEffect(() => {
         const fetchSales = async () => {
-            const response = await axios.get('/api/sales');
-            setSales(response.data);
+            try {
+                const response = await axios.get('http://localhost:5432/sales'); // Pastikan URL ini sesuai dengan endpoint backend
+                setSales(response.data);
+            } catch (error) {
+                console.error('There was an error fetching the sales!', error);
+            }
         };
 
         fetchSales();
     }, []);
 
-    const handleAddSale = (newSale) => {
-        setSales([...sales, newSale]);
+    const handleAddSale = async (newSale) => {
+        try {
+            const response = await axios.post('http://localhost:5432/sales', newSale);
+            setSales([...sales, response.data]);
+        } catch (error) {
+            console.error('There was an error adding the sale!', error);
+        }
     };
 
     return (

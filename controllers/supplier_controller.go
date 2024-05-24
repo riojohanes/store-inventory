@@ -9,19 +9,22 @@ import (
 )
 
 func GetSuppliers(c *gin.Context) {
-	//get all suppliers
+	// Get all suppliers
 	db := c.MustGet("db").(*gorm.DB)
 	var suppliers []models.Supplier
-	db.Preload("suppliers").Find(&suppliers)
+	if err := db.Find(&suppliers).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, suppliers)
 }
 
 func GetSupplier(c *gin.Context) {
-	//get supplier
+	// Get supplier by ID
 	db := c.MustGet("db").(*gorm.DB)
 	var supplier models.Supplier
 	id := c.Param("id")
-	if err := db.Preload("suppliers").First(&supplier, id).Error; err != nil {
+	if err := db.First(&supplier, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Supplier not found"})
 		return
 	}
@@ -29,19 +32,22 @@ func GetSupplier(c *gin.Context) {
 }
 
 func AddSupplier(c *gin.Context) {
-	//add supplier
+	// Add new supplier
 	db := c.MustGet("db").(*gorm.DB)
 	var supplier models.Supplier
 	if err := c.ShouldBindJSON(&supplier); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	db.Create(&supplier)
+	if err := db.Create(&supplier).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, supplier)
 }
 
 func UpdateSupplier(c *gin.Context) {
-	//update supplier
+	// Update supplier by ID
 	db := c.MustGet("db").(*gorm.DB)
 	var supplier models.Supplier
 	id := c.Param("id")
@@ -49,24 +55,29 @@ func UpdateSupplier(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Supplier not found"})
 		return
 	}
-
 	if err := c.ShouldBindJSON(&supplier); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	db.Save(&supplier)
+	if err := db.Save(&supplier).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, supplier)
 }
 
 func DeleteSupplier(c *gin.Context) {
-	// delete supplier
+	// Delete supplier by ID
 	db := c.MustGet("db").(*gorm.DB)
 	var supplier models.Supplier
 	id := c.Param("id")
 	if err := db.First(&supplier, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Delete failed"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Supplier not found"})
 		return
 	}
-	db.Delete(&supplier)
+	if err := db.Delete(&supplier).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"message": "Supplier deleted"})
 }
