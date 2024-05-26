@@ -6,11 +6,11 @@ import (
 
 type Item struct {
     gorm.Model
-    Name        string `gorm:"type:text"`
-    Description string `gorm:"type:text"`
-    Quantity    int64  `gorm:"type:bigint"`
-    CategoryID  uint
-    Price       int64  `gorm:"type:bigint"`
-    SupplierID  uint
-    Supplier    string `gorm:"type:text"`
+    Name        string `gorm:"type:text" json:"Name"`
+    Description string `gorm:"type:text" json:"Description"`
+    Quantity    int64  `gorm:"type:bigint" json:"Quantity"`
+    CategoryID  uint   `json:"CategoryID"`
+    Price       int64  `gorm:"type:bigint" json:"Price"`
+    SupplierID  uint   `json:"SupplierID"`
+    Supplier    string `gorm:"type:text" json:"Supplier"`
 }

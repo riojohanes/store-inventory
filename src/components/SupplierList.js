@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 
-const SupplierList = () => {
-    const [suppliers, setSuppliers] = useState([]);
+const SupplierList = ({ suppliers, onUpdateSupplier, onDeleteSupplier }) => {
+    const [editSupplierId, setEditSupplierId] = useState(null);
+    const [editSupplierName, setEditSupplierName] = useState('');
 
-    useEffect(() => {
-        const fetchSuppliers = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/suppliers');
-                setSuppliers(response.data);
-                console.log(response);
-            } catch (error) {
-                console.error('There was an error fetching the suppliers!', error);
-            }
-        };
+    const handleEditClick = (supplier) => {
+        setEditSupplierId(supplier.ID);
+        setEditSupplierName(supplier.name);
+    };
 
-        fetchSuppliers();
-    }, []);
+    const handleSaveClick = () => {
+        onUpdateSupplier({ ID: editSupplierId, name: editSupplierName });
+        setEditSupplierId(null);
+        setEditSupplierName('');
+    };
 
     return (
         <TableContainer component={Paper}>
@@ -26,13 +26,39 @@ const SupplierList = () => {
                     <TableRow>
                         <TableCell>Supplier ID</TableCell>
                         <TableCell>Supplier Name</TableCell>
+                        <TableCell>Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {suppliers.map((supplier) => (
-                        <TableRow key={supplier.id}>
+                        <TableRow key={supplier.ID}>
                             <TableCell>{supplier.ID}</TableCell>
-                            <TableCell>{supplier.name}</TableCell>
+                            <TableCell>
+                                {editSupplierId === supplier.ID ? (
+                                    <TextField
+                                        value={editSupplierName}
+                                        onChange={(e) => setEditSupplierName(e.target.value)}
+                                    />
+                                ) : (
+                                    supplier.name
+                                )}
+                            </TableCell>
+                            <TableCell>
+                                {editSupplierId === supplier.ID ? (
+                                    <IconButton onClick={handleSaveClick}>
+                                        <SaveIcon />
+                                    </IconButton>
+                                ) : (
+                                    <>
+                                        <IconButton onClick={() => handleEditClick(supplier)}>
+                                            <EditIcon />
+                                        </IconButton>
+                                        <IconButton onClick={() => onDeleteSupplier(supplier.ID)}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </>
+                                )}
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

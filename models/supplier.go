@@ -1,7 +1,7 @@
 package models
 
 type Supplier struct {
-	ID    uint   `gorm:"PrimaryKey"`
+	ID    uint   `gorm:"primaryKey"`
 	Name  string `json:"name"`
 	Items []Item `json:"items"`
 }

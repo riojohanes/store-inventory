@@ -9,7 +9,6 @@ import (
 )
 
 func GetSuppliers(c *gin.Context) {
-	// Get all suppliers
 	db := c.MustGet("db").(*gorm.DB)
 	var suppliers []models.Supplier
 	if err := db.Find(&suppliers).Error; err != nil {
@@ -20,7 +19,6 @@ func GetSuppliers(c *gin.Context) {
 }
 
 func GetSupplier(c *gin.Context) {
-	// Get supplier by ID
 	db := c.MustGet("db").(*gorm.DB)
 	var supplier models.Supplier
 	id := c.Param("id")
@@ -32,7 +30,6 @@ func GetSupplier(c *gin.Context) {
 }
 
 func AddSupplier(c *gin.Context) {
-	// Add new supplier
 	db := c.MustGet("db").(*gorm.DB)
 	var supplier models.Supplier
 	if err := c.ShouldBindJSON(&supplier); err != nil {
@@ -47,7 +44,6 @@ func AddSupplier(c *gin.Context) {
 }
 
 func UpdateSupplier(c *gin.Context) {
-	// Update supplier by ID
 	db := c.MustGet("db").(*gorm.DB)
 	var supplier models.Supplier
 	id := c.Param("id")
@@ -67,7 +63,6 @@ func UpdateSupplier(c *gin.Context) {
 }
 
 func DeleteSupplier(c *gin.Context) {
-	// Delete supplier by ID
 	db := c.MustGet("db").(*gorm.DB)
 	var supplier models.Supplier
 	id := c.Param("id")

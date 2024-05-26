@@ -2,41 +2,37 @@ import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import axios from 'axios';
 
-const SupplierForm = ({ onAdd }) => {
-    const [supplierData, setSupplierData] = useState({
-        supplier_name: ''
-    });
+const SupplierForm = ({ onAddSupplier }) => {
+    const [supplierName, setSupplierName] = useState('');
 
-    const handleChange = (e) => {
-        setSupplierData({
-            ...supplierData,
-            [e.target.name]: e.target.value
-        });
+    const handleAddSupplier = async () => {
+        try {
+            const response = await axios.post('http://localhost:8080/suppliers', { name: supplierName });
+            onAddSupplier(response.data);
+            setSupplierName('');
+        } catch (error) {
+            console.error('There was an error adding the supplier!', error);
+        }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post('/api/suppliers', supplierData);
-            onAdd(response.data);
-            setSupplierData({ supplier_name: '' });
-        } catch (error) {
-            console.error('There was an error creating the supplier!', error);
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent form submission on Enter
+            handleAddSupplier();
         }
     };
 
     return (
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
             <TextField
                 label="Supplier Name"
-                name="supplier_name"
-                value={supplierData.supplier_name}
-                onChange={handleChange}
-                required
-                fullWidth
-                margin="normal"
+                variant="outlined"
+                value={supplierName}
+                onChange={(e) => setSupplierName(e.target.value)}
+                onKeyDown={handleKeyDown}
+                sx={{ mb: 2, width: '300px' }}
             />
-            <Button type="submit" variant="contained" color="primary" fullWidth>
+            <Button variant="contained" color="primary" onClick={handleAddSupplier}>
                 Add Supplier
             </Button>
         </Box>
