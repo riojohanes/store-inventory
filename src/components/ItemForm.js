@@ -9,8 +9,7 @@ const ItemForm = ({ onAdd }) => {
         Quantity: '',
         CategoryID: '',
         Price: '',
-        SupplierID: '',
-        Supplier: ''
+        SupplierID: ''
     });
     const [categories, setCategories] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
@@ -39,9 +38,9 @@ const ItemForm = ({ onAdd }) => {
         const { name, value } = e.target;
         setItemData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: name === 'Quantity' ? Number(value) : name === "Price" ? Number(value) : value,
             ...(name === 'SupplierID' && {
-                Supplier: suppliers.find((supplier) => supplier.ID === parseInt(value))?.name || ''
+                Supplier: suppliers.find((supplier) => supplier.ID === parseInt(value, 10))?.name || ''
             })
         }));
     };
@@ -54,7 +53,7 @@ const ItemForm = ({ onAdd }) => {
         try {
             const response = await axios.post('http://localhost:8080/items', itemData);
             onAdd(response.data);
-            setItemData({ Name: '', Description: '', Quantity: '', CategoryID: '', Price: '', SupplierID: '', Supplier: '' });
+            setItemData({ Name: '', Description: '', Quantity: '', CategoryID: '', Price: '', SupplierID: '' });
         } catch (error) {
             setError('There was an error creating the item!');
             console.error('There was an error creating the item!', error);

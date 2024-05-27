@@ -1,7 +1,9 @@
 package models
 
+import "gorm.io/gorm"
+
 type Supplier struct {
-	ID    uint   `gorm:"primaryKey"`
+	gorm.Model
 	Name  string `json:"name"`
 	Items []Item `json:"items"`
 }
