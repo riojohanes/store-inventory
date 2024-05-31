@@ -22,7 +22,13 @@ func GetSupplier(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var supplier models.Supplier
 	id := c.Param("id")
-	if err := db.First(&supplier, id).Error; err != nil {
+	query := db
+
+	if c.Query("include") == "items" {
+		query = query.Preload("Items")
+	}
+
+	if err := query.First(&supplier, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Supplier not found"})
 		return
 	}

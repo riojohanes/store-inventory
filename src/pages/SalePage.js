@@ -10,7 +10,7 @@ const SalePage = () => {
     useEffect(() => {
         const fetchSales = async () => {
             try {
-                const response = await axios.get('http://localhost:5432/sales'); // Pastikan URL ini sesuai dengan endpoint backend
+                const response = await axios.get('http://localhost:8080/sales'); // Pastikan URL ini sesuai dengan endpoint backend
                 setSales(response.data);
             } catch (error) {
                 console.error('There was an error fetching the sales!', error);

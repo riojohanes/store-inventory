@@ -5,18 +5,16 @@ import (
 )
 
 type Order struct {
-    gorm.Model
-    SupplierID uint        `json:"supplier_id"`
-    Supplier   Supplier    `json:"supplier" gorm:"foreignKey:SupplierID"`
-    OrderDate  string      `json:"order_date"`
-    Status     string      `json:"status"`
-    OrderItems []OrderItem `json:"order_items" gorm:"foreignKey:OrderID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	gorm.Model
+	OrderDate  string    `gorm:"type:text" json:"order_date"`
+	Status     string    `gorm:"type:text" json:"status"`
+	SupplierID uint      `json:"supplier_id"`
+	Supplier   *Supplier `gorm:"foreignKey:SupplierID" json:"supplier"`
+	Items      []Item    `gorm:"many2many:order_items;" json:"items"`
 }
 
-type OrderItem struct {
-    gorm.Model
-    OrderID  uint  `json:"order_id"`
-    ItemID   uint  `json:"item_id"`
-    Item     Item  `json:"item" gorm:"foreignKey:ItemID"`
-    Quantity int   `json:"quantity"`
+type OrderItems struct {
+	gorm.Model
+	OrderID uint `gorm:"primaryKey"`
+	ItemID  uint `gorm:"primaryKey"`
 }

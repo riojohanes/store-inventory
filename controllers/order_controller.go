@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	// "log"
 	"net/http"
 	"store-inventory-app/models"
 
@@ -12,7 +13,7 @@ func GetOrders(c *gin.Context) {
 	// Get all orders
 	db := c.MustGet("db").(*gorm.DB)
 	var orders []models.Order
-	if err := db.Preload("OrderItems").Preload("OrderItems.Item").Find(&orders).Error; err != nil {
+	if err := db.Preload("Supplier").Find(&orders).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -24,7 +25,20 @@ func GetOrder(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var order models.Order
 	id := c.Param("id")
-	if err := db.Preload("OrderItems").Preload("OrderItems.Item").First(&order, id).Error; err != nil {
+
+	if err := db.Preload("Supplier").First(&order, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		return
+	}
+	c.JSON(http.StatusOK, order)
+}
+
+func GetOrderWithItems(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	var order models.Order
+	id := c.Param("id")
+
+	if err := db.Preload("Supplier").Preload("Items").First(&order, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
 		return
 	}
@@ -39,6 +53,24 @@ func AddOrder(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	var supplier models.Supplier
+	if err := db.First(&supplier, order.SupplierID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var items []models.Item
+	for _, item := range order.Items {
+		var dbItem models.Item
+		if err := db.First(&dbItem, item.ID).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Item not found"})
+			return
+		}
+		items = append(items, dbItem)
+	}
+	order.Items = items
+
 	if err := db.Create(&order).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

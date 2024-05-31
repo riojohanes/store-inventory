@@ -11,7 +11,7 @@ import (
 func GetItems(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var items []models.Item
-	if err := db.Find(&items).Error; err != nil {
+	if err := db.Preload("Category").Preload("Supplier").Find(&items).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -22,7 +22,7 @@ func GetItem(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var item models.Item
 	id := c.Param("id")
-	if err := db.Preload("Category").First(&item, id).Error; err != nil {
+	if err := db.Preload("Category").Preload("Supplier").First(&item, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
 		return
 	}

@@ -1,16 +1,15 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
+import "gorm.io/gorm"
 
 type Item struct {
 	gorm.Model
-	Name        string `gorm:"type:text" json:"Name"`
-	Description string `gorm:"type:text" json:"Description"`
-	Quantity    int64  `gorm:"type:bigint" json:"Quantity"`
-	CategoryID  uint   `json:"CategoryID"`
-	Price       int64  `gorm:"type:bigint" json:"Price"`
-	SupplierID  uint   `json:"SupplierID"`
-	Supplier    string `gorm:"type:text" json:"Supplier"`
+	Name        string    `gorm:"type:text" json:"name"`
+	Description string    `gorm:"type:text" json:"description"`
+	Quantity    int64     `gorm:"type:bigint" json:"quantity"`
+	Price       int64     `gorm:"type:bigint" json:"price"`
+	CategoryID  uint      `json:"category_id"`
+	Category    *Category `gorm:"foreignKey:CategoryID" json:"category"`
+	SupplierID  uint      `json:"supplier_id"`
+	Supplier    *Supplier `gorm:"foreignKey:SupplierID" json:"supplier"`
 }

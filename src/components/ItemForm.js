@@ -4,12 +4,12 @@ import axios from 'axios';
 
 const ItemForm = ({ onAdd }) => {
     const [itemData, setItemData] = useState({
-        Name: '',
-        Description: '',
-        Quantity: '',
-        CategoryID: '',
-        Price: '',
-        SupplierID: ''
+        name: '',
+        description: '',
+        quantity: '',
+        category_id: '',
+        price: '',
+        supplier_id: ''
     });
     const [categories, setCategories] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
@@ -38,10 +38,7 @@ const ItemForm = ({ onAdd }) => {
         const { name, value } = e.target;
         setItemData((prevData) => ({
             ...prevData,
-            [name]: name === 'Quantity' ? Number(value) : name === "Price" ? Number(value) : value,
-            ...(name === 'SupplierID' && {
-                Supplier: suppliers.find((supplier) => supplier.ID === parseInt(value, 10))?.name || ''
-            })
+            [name]: (name === 'quantity' || name === 'price') ? Number(value) : value,
         }));
     };
 
@@ -53,7 +50,7 @@ const ItemForm = ({ onAdd }) => {
         try {
             const response = await axios.post('http://localhost:8080/items', itemData);
             onAdd(response.data);
-            setItemData({ Name: '', Description: '', Quantity: '', CategoryID: '', Price: '', SupplierID: '' });
+            setItemData({ name: '', description: '', quantity: '', category_id: '', price: '', supplier_id: '' });
         } catch (error) {
             setError('There was an error creating the item!');
             console.error('There was an error creating the item!', error);
@@ -66,8 +63,8 @@ const ItemForm = ({ onAdd }) => {
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <TextField
                 label="Item Name"
-                name="Name"
-                value={itemData.Name}
+                name="name"
+                value={itemData.name}
                 onChange={handleChange}
                 required
                 fullWidth
@@ -75,8 +72,8 @@ const ItemForm = ({ onAdd }) => {
             />
             <TextField
                 label="Description"
-                name="Description"
-                value={itemData.Description}
+                name="description"
+                value={itemData.description}
                 onChange={handleChange}
                 required
                 fullWidth
@@ -84,8 +81,8 @@ const ItemForm = ({ onAdd }) => {
             />
             <TextField
                 label="Quantity"
-                name="Quantity"
-                value={itemData.Quantity}
+                name="quantity"
+                value={itemData.quantity}
                 onChange={handleChange}
                 required
                 fullWidth
@@ -95,8 +92,8 @@ const ItemForm = ({ onAdd }) => {
             <FormControl fullWidth margin="normal">
                 <InputLabel>Category</InputLabel>
                 <Select
-                    name="CategoryID"
-                    value={itemData.CategoryID}
+                    name="category_id"
+                    value={itemData.category_id}
                     onChange={handleChange}
                     required
                 >
@@ -109,8 +106,8 @@ const ItemForm = ({ onAdd }) => {
             </FormControl>
             <TextField
                 label="Price"
-                name="Price"
-                value={itemData.Price}
+                name="price"
+                value={itemData.price}
                 onChange={handleChange}
                 required
                 fullWidth
@@ -120,8 +117,8 @@ const ItemForm = ({ onAdd }) => {
             <FormControl fullWidth margin="normal">
                 <InputLabel>Supplier</InputLabel>
                 <Select
-                    name="SupplierID"
-                    value={itemData.SupplierID}
+                    name="supplier_id"
+                    value={itemData.supplier_id}
                     onChange={handleChange}
                     required
                 >

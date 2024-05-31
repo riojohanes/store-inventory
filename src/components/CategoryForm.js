@@ -7,8 +7,8 @@ const CategoryForm = ({ onAddCategory }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const handleAddCategory = async (event) => {
-        event.preventDefault(); // Prevent default form submission
+    const handleAddCategory = async (e) => {
+        e.preventDefault();
         setLoading(true);
         setError('');
         try {
@@ -30,8 +30,9 @@ const CategoryForm = ({ onAddCategory }) => {
                 variant="outlined"
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
-                sx={{ mb: 2, width: '300px' }}
                 required
+                fullWidth
+                margin="normal"
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                         handleAddCategory(e);

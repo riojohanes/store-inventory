@@ -51,6 +51,7 @@ func Init() *gin.Engine {
 	r.GET("/orders", controllers.GetOrders)
 	r.POST("/orders", controllers.AddOrder)
 	r.GET("/orders/:id", controllers.GetOrder)
+	r.GET("/orders/:id/items", controllers.GetOrderWithItems)
 	r.PUT("/orders/:id", controllers.UpdateOrder)
 	r.DELETE("/orders/:id", controllers.DeleteOrder)
 

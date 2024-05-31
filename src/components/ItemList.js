@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Snackbar, Alert } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Snackbar, Alert, Select, MenuItem } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
@@ -11,6 +11,26 @@ const ItemList = ({ items, onUpdateItem, onDeleteItem }) => {
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
     const [error, setError] = useState('');
+    const [categories, setCategories] = useState([]);
+    const [suppliers, setSuppliers] = useState([]);
+
+    useEffect(() => {
+        const fetchCategoriesAndSuppliers = async () => {
+            try {
+                const [categoriesResponse, suppliersResponse] = await Promise.all([
+                    axios.get('http://localhost:8080/categories'),
+                    axios.get('http://localhost:8080/suppliers')
+                ]);
+                setCategories(categoriesResponse.data);
+                setSuppliers(suppliersResponse.data);
+            } catch (error) {
+                setError('There was an error fetching categories and suppliers');
+                console.error('There was an error fetching categories and suppliers!', error);
+            }
+        };
+
+        fetchCategoriesAndSuppliers();
+    }, []);
 
     const handleEditClick = (item) => {
         setEditItemId(item.ID);
@@ -67,9 +87,8 @@ const ItemList = ({ items, onUpdateItem, onDeleteItem }) => {
                             <TableCell>Item Name</TableCell>
                             <TableCell>Description</TableCell>
                             <TableCell>Quantity</TableCell>
-                            <TableCell>Category ID</TableCell>
+                            <TableCell>Category</TableCell>
                             <TableCell>Price</TableCell>
-                            <TableCell>Supplier ID</TableCell>
                             <TableCell>Supplier</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
@@ -82,86 +101,86 @@ const ItemList = ({ items, onUpdateItem, onDeleteItem }) => {
                                     {editItemId === item.ID ? (
                                         <TextField
                                             name="Name"
-                                            value={editItemData.Name}
+                                            value={editItemData.name}
                                             onChange={handleChange}
                                             fullWidth
                                         />
                                     ) : (
-                                        item.Name
+                                        item.name
                                     )}
                                 </TableCell>
                                 <TableCell>
                                     {editItemId === item.ID ? (
                                         <TextField
                                             name="Description"
-                                            value={editItemData.Description}
+                                            value={editItemData.description}
                                             onChange={handleChange}
                                             fullWidth
                                         />
                                     ) : (
-                                        item.Description
+                                        item.description
                                     )}
                                 </TableCell>
                                 <TableCell>
                                     {editItemId === item.ID ? (
                                         <TextField
                                             name="Quantity"
-                                            value={editItemData.Quantity}
+                                            value={editItemData.quantity}
                                             onChange={handleChange}
                                             fullWidth
                                             type="number"
                                         />
                                     ) : (
-                                        item.Quantity
+                                        item.quantity
                                     )}
                                 </TableCell>
                                 <TableCell>
                                     {editItemId === item.ID ? (
-                                        <TextField
-                                            name="CategoryID"
-                                            value={editItemData.CategoryID}
-                                            onChange={handleChange}
-                                            fullWidth
-                                        />
+                                        <Select
+                                        name="category_id"
+                                        value={editItemData.category_id}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        {categories.map((category) => (
+                                            <MenuItem key={category.ID} value={category.ID}>
+                                                {category.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
                                     ) : (
-                                        item.CategoryID
+                                        item.category.name
                                     )}
                                 </TableCell>
                                 <TableCell>
                                     {editItemId === item.ID ? (
                                         <TextField
                                             name="Price"
-                                            value={editItemData.Price}
+                                            value={editItemData.price}
                                             onChange={handleChange}
                                             fullWidth
                                             type="number"
                                         />
                                     ) : (
-                                        item.Price
+                                        item.price
                                     )}
                                 </TableCell>
                                 <TableCell>
                                     {editItemId === item.ID ? (
-                                        <TextField
-                                            name="SupplierID"
-                                            value={editItemData.SupplierID}
-                                            onChange={handleChange}
-                                            fullWidth
-                                        />
+                                        <Select
+                                        name="Supplier"
+                                        value={editItemData.supplier_id}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        {suppliers.map((supplier) => (
+                                            <MenuItem key={supplier.ID} value={supplier.ID}>
+                                                {supplier.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
                                     ) : (
-                                        item.SupplierID
-                                    )}
-                                </TableCell>
-                                <TableCell>
-                                    {editItemId === item.ID ? (
-                                        <TextField
-                                            name="Supplier"
-                                            value={editItemData.Supplier}
-                                            onChange={handleChange}
-                                            fullWidth
-                                        />
-                                    ) : (
-                                        item.Supplier
+                                        item.supplier.name
                                     )}
                                 </TableCell>
                                 <TableCell>
